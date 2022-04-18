@@ -1,0 +1,9 @@
+# Miscellaneous
+.DS_Store
+.idea
+.history
+.vscode
+
+# NPM
+code/build
+code/node_modules
