@@ -17,10 +17,12 @@
 
 ```shell
 IMAGE_NAME=orchasystems/openapi-generator:latest
-docker run -v ${PWD}:/local ${IMAGE_NAME} -- -r /local
+docker run -v ${PWD}:/local ${IMAGE_NAME} -- -r /local -f ./openapi/specs/openapi.yaml -o ./openapi
 ```
 
 # Generator options
 
 - `-v` Verbose logging
 - `-r <CONTENT_ROOT>` Allows to the content root
+- `-f` Allows to change the openapi YAML file path, default: `./services/gateway/openapi/specs/openapi.yaml`
+- `-o` Allows to change output location, default: `./services/gateway/openapi`

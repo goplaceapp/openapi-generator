@@ -14,6 +14,9 @@ if (indexRootParam >= 0) {
     process.chdir(process.argv[indexRootParam + 1]);
 }
 
+const indexFileParam = process.argv.indexOf('-f');
+const indexOutputLocationParam = process.argv.indexOf('-o');
+
 const getGoGenerateTarget = (base: string, withRouters?: boolean, ignoredFiles: string[] = []): GoGenerateTarget => ({
     base: path.normalize(base),
     models: path.normalize(base + '/go'),
@@ -23,8 +26,14 @@ const getGoGenerateTarget = (base: string, withRouters?: boolean, ignoredFiles: 
 
 const AllYAMLs: { [name: string]: YAMLSpec } = {
     GATEWAY: {
-        openapiPath: path.normalize('./services/gateway/openapi/api/openapi.yaml'),
-        goGenerateTarget: getGoGenerateTarget('./services/gateway/openapi', true),
+        openapiPath:
+            indexFileParam >= 0
+                ? path.normalize(process.argv[indexFileParam + 1])
+                : path.normalize('./services/gateway/openapi/specs/openapi.yaml'),
+        goGenerateTarget:
+            indexOutputLocationParam >= 0
+                ? getGoGenerateTarget(process.argv[indexOutputLocationParam + 1], true)
+                : getGoGenerateTarget('./services/gateway/openapi', true),
     },
 };
 
