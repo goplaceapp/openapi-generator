@@ -16,7 +16,7 @@
 # Usage example of the Docker Container
 
 ```shell
-IMAGE_NAME=orchasystems/openapi-generator:latest
+IMAGE_NAME=goplace/openapi-generator:latest
 docker run -v ${PWD}:/local ${IMAGE_NAME} -- -r /local -f ./openapi/specs/openapi.yaml -o ./openapi
 ```
 

@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import { Comments } from './comments';
-import type { ExtraTag, GoGenerateTarget, Meta, Prop, PropSpec, Request, Schema } from './types';
+import fs from 'fs'
+import path from 'path'
+import { Comments } from './comments'
+import type { ExtraTag, GoGenerateTarget, Meta, Prop, PropSpec, Request, Schema } from './types'
 
 // TODO: Calculate the "/v1"
-const basePath = '/v1';
+const basePath = '/v1'
 
-const _indentNewLines = (s: string, tabs = 1) => s.replace(/\n(.+)/g, `\n${'\t'.repeat(tabs)}$1`);
+const _indentNewLines = (s: string, tabs = 1) => s.replace(/\n(.+)/g, `\n${'\t'.repeat(tabs)}$1`)
 
 const routers = (source: string, title: string, description: string, requests: Request[]) =>
     Comments.index(source, title, description) +
@@ -78,12 +78,12 @@ ${name}() ContextHandler`
             .join('\n\n')
     )}
 }
-`;
+`
 
 const _capitalize = (s: any): string => {
-    if (typeof s !== 'string') return '';
-    return s.charAt(0).toUpperCase() + s.slice(1);
-};
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
 
 const stringifyPropertiesType = (properties: Prop[], extensions: string[]): string =>
     properties.length
@@ -103,62 +103,62 @@ const stringifyPropertiesType = (properties: Prop[], extensions: string[]): stri
 }`
         : extensions.length === 1
         ? extensions[0]
-        : '{}';
+        : '{}'
 
 const serializeExtraTags = (extraTags: ExtraTag[]): string =>
-    extraTags.map(({ key, value }) => `${key}:"${value}"`).join(' ');
+    extraTags.map(({ key, value }) => `${key}:"${value}"`).join(' ')
 
 const serializePropSpec = (spec: PropSpec): string => {
     switch (spec.type) {
         case 'plain':
-            if (spec.value === 'string' || spec.value === 'int64' || spec.value === 'int32') return spec.value;
-            if (spec.value === 'date-time') return 'time.Time';
-            if (spec.value === 'date') return 'string';
-            if (spec.value === 'number') return 'float32';
-            if (spec.value === 'boolean') return 'bool';
-            break;
+            if (spec.value === 'string' || spec.value === 'int64' || spec.value === 'int32') return spec.value
+            if (spec.value === 'date-time') return 'time.Time'
+            if (spec.value === 'date') return 'string'
+            if (spec.value === 'number') return 'float32'
+            if (spec.value === 'boolean') return 'bool'
+            break
         case 'ref':
-            return spec.value;
+            return spec.value
         case 'enum':
             // TODO(HY): This type is currently broken
-            return spec.value as any;
+            return spec.value as any
         case 'array':
-            return array(serializePropSpec(spec.value));
+            return array(serializePropSpec(spec.value))
         case 'map':
-            return map(serializePropSpec(spec.value));
+            return map(serializePropSpec(spec.value))
         case 'object':
-            return stringifyPropertiesType(spec.value, spec.extensions);
+            return stringifyPropertiesType(spec.value, spec.extensions)
     }
-    throw new Error('Could not serialize prop spec: ' + JSON.stringify(spec));
-};
+    throw new Error('Could not serialize prop spec: ' + JSON.stringify(spec))
+}
 
-const type = (name: string, def: string) => `type ${name} = ${def}`;
-const structType = (name: string, def: string) => `type ${name} struct ${def}`;
+const type = (name: string, def: string) => `type ${name} = ${def}`
+const structType = (name: string, def: string) => `type ${name} struct ${def}`
 const enumType = (name: string, values: string[]) => `type ${name} string
 
 // List of ${name}
 const (
 \t${_indentNewLines(values.map((value) => `${name}_${value} ${name} = "${value}"`).join('\n\n'))}
-)`;
+)`
 
-const map = (type: string) => `map[string]${type}`;
-const array = (type: string) => `[]${type}`;
+const map = (type: string) => `map[string]${type}`
+const array = (type: string) => `[]${type}`
 
 const stringifyImports = (refs: Meta['goRefs']) =>
     refs.size > 0
         ? `import (
 \t${_indentNewLines([...refs].map((name) => `"${name}"`).join('\n'))}
 )`
-        : '';
+        : ''
 
 const fileContent = (source: string, { name, meta, spec }: Schema) => {
-    const serialized = serializePropSpec(spec);
+    const serialized = serializePropSpec(spec)
     const ownContent =
         spec.type === 'enum'
             ? enumType(name, serialized as any) // TODO(HY): This type is currently broken
             : spec.type === 'object'
             ? structType(name, serialized)
-            : type(name, serialized);
+            : type(name, serialized)
 
     return (
         Comments.general(source) +
@@ -169,8 +169,8 @@ ${stringifyImports(meta.goRefs)}
 ${ownContent}
 `.trim() +
         '\n'
-    );
-};
+    )
+}
 
 const generate = (
     source: string,
@@ -180,27 +180,27 @@ const generate = (
     requests: Request[],
     { models, withRouters, ignoredFiles }: GoGenerateTarget
 ) => {
-    const schemaNames = schemas.map(({ name }) => name);
-    const dontDeleteFileNames = schemaNames.concat(ignoredFiles).concat(withRouters ? 'routers.go' : []);
+    const schemaNames = schemas.map(({ name }) => name)
+    const dontDeleteFileNames = schemaNames.concat(ignoredFiles).concat(withRouters ? 'routers.go' : [])
     fs.readdirSync(models)
         .filter((fileName) => !dontDeleteFileNames.includes(fileName))
-        .forEach((fileName) => fs.unlinkSync(path.join(models, fileName)));
+        .forEach((fileName) => fs.unlinkSync(path.join(models, fileName)))
 
     schemas.forEach((schema) => {
-        fs.writeFileSync(path.join(models, schema.name + '.go'), fileContent(source, schema));
-    });
+        fs.writeFileSync(path.join(models, schema.name + '.go'), fileContent(source, schema))
+    })
 
     if (withRouters) {
-        requests.unshift({ path: '/', requestType: 'get', name: 'index', category: 'index' });
+        requests.unshift({ path: '/', requestType: 'get', name: 'index', category: 'index' })
         const r = requests.map(
             (parsedPath): Request => ({
                 ...parsedPath,
                 name: _capitalize(parsedPath.name),
                 requestType: _capitalize(parsedPath.requestType) as Request['requestType'], // TODO(HY): This type is currently broken
             })
-        );
-        fs.writeFileSync(path.join(models, 'routers.go'), routers(source, title, description, r));
+        )
+        fs.writeFileSync(path.join(models, 'routers.go'), routers(source, title, description, r))
     }
-};
+}
 
-export const Golang = { generate };
+export const Golang = { generate }
