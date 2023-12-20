@@ -29,11 +29,11 @@ const AllYAMLs: { [name: string]: YAMLSpec } = {
         openapiPath:
             indexFileParam >= 0
                 ? path.normalize(process.argv[indexFileParam + 1])
-                : path.normalize('./services/gateway/openapi/specs/openapi.yaml'),
+                : path.normalize('./openapi/specs/openapi.yaml'),
         goGenerateTarget:
             indexOutputLocationParam >= 0
                 ? getGoGenerateTarget(process.argv[indexOutputLocationParam + 1], true)
-                : getGoGenerateTarget('./services/gateway/openapi', true),
+                : getGoGenerateTarget('./openapi', true),
     },
 }
 

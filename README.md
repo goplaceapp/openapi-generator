@@ -24,5 +24,5 @@ docker run -v ${PWD}:/local ${IMAGE_NAME} -- -r /local -f ./openapi/specs/openap
 
 - `-v` Verbose logging
 - `-r <CONTENT_ROOT>` Allows to the content root
-- `-f` Allows to change the openapi YAML file path, default: `./services/gateway/openapi/specs/openapi.yaml`
-- `-o` Allows to change output location, default: `./services/gateway/openapi`
+- `-f` Allows to change the openapi YAML file path, default: `./openapi/specs/openapi.yaml`
+- `-o` Allows to change output location, default: `./openapi`
