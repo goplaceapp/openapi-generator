@@ -1,4 +1,4 @@
-FROM node:21.4.0-alpine3.19 AS BUILD
+FROM node:20.10.0-alpine3.19 AS BUILD
 COPY . /openapi-generator
 WORKDIR /openapi-generator/code
 # Prepare special .npmrc
@@ -7,7 +7,7 @@ WORKDIR /openapi-generator/code
 RUN echo "package-import-method=copy" > /root/.npmrc
 RUN npm i
 
-FROM node:21.4.0-alpine3.19
+FROM node:20.10.0-alpine3.19
 RUN npm i
 COPY --from=BUILD /openapi-generator/code/build /usr/lib/openapi-generator
 COPY --from=BUILD /openapi-generator/code/node_modules /usr/lib/openapi-generator/node_modules
