@@ -89,11 +89,17 @@ const getProperties = (meta: Meta, schema: any): Prop[] =>
     })
 
 const getExtraTags = (desc: any): ExtraTag[] => {
+    let extraTags: ExtraTag[] = [];
+
     if (Object.prototype.hasOwnProperty.call(desc, 'x-extra-tags')) {
-        return Object.entries(desc['x-extra-tags'] || {}).map(([key, value]: [string, any]) => ({ key, value }))
+        extraTags = Object.entries(desc['x-extra-tags'] || {}).map(([key, value]: [string, any]) => ({key, value}));
     }
 
-    return []
+    if (Object.prototype.hasOwnProperty.call(desc, 'x-permissions')) {
+        extraTags.push({key: 'x-permissions', value: desc['x-permissions']});
+    }
+
+    return extraTags;
 }
 
 const parseSchema = (name: string, schema: any): Schema => {
@@ -131,12 +137,14 @@ export const generate = async (name: string, { openapiPath, goGenerateTarget }: 
     const requests = Object.entries(parser.api.paths || {})
         .map(([path, requests]: [string, any]) => {
             const parsedPath = path.replace(/{([^}]+)}/g, ':$1')
+            const permissions = requests.get?.['x-permissions'] || []
             return Object.entries(requests).map(([requestType, request]: [string, any]) => ({
                 path: parsedPath,
                 requestType,
                 description: request.summary,
                 name: request.operationId,
                 category: request.tags?.[0] || 'index',
+                permissions,
             }))
         })
         .flat()

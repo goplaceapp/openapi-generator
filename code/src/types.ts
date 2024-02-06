@@ -28,6 +28,7 @@ export type Request = {
     description?: string
     name: string
     category: string
+    permissions?: string[]
 }
 
 export type GoGenerateTarget = { base: string; models: string; withRouters?: boolean; ignoredFiles: string[] }
