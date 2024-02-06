@@ -8,11 +8,13 @@
     "generate": "node --es-module-specifier-resolution=node build/run.js",
     "ts-emit": "rm -rf build && tsc",
     "ts-checks": "tsc --noEmit",
-    "test": "echo \"Contains no tests\""
+    "test": "echo \"Contains no tests\"",
+    "circular-check": "madge -c --extensions ts,tsx --ts-config tsconfig.json --no-spinner src/"
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0"
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "madge": "^6.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",

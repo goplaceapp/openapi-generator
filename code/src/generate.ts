@@ -1,9 +1,9 @@
 import SwaggerParser from '@apidevtools/swagger-parser'
 import fs from 'fs'
-import { OpenAPIV3 } from 'openapi-types'
-import { Debug } from './debug'
-import { Golang } from './golang'
-import type { AttributeInfo, ExtraTag, Meta, Nesting, Prop, PropSpec, Request, Schema, YAMLSpec } from './types'
+import {OpenAPIV3} from 'openapi-types'
+import {Debug} from './debug.js'
+import {Golang} from './golang.js'
+import type {AttributeInfo, ExtraTag, Meta, Nesting, Prop, PropSpec, Request, Schema, YAMLSpec} from './types'
 
 const getRefName = (ref: string): string => {
     const pathChunks = ref.split('/')

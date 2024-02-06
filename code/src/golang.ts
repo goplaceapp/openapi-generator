@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import { Comments } from './comments'
-import type { ExtraTag, GoGenerateTarget, Meta, Prop, PropSpec, Request, Schema } from './types'
+import {Comments} from './comments.js'
+import type {ExtraTag, GoGenerateTarget, Meta, Prop, PropSpec, Request, Schema} from './types.js'
 
 // TODO: Calculate the "/v1"
 const basePath = '/v1'

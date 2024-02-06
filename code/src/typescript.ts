@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import { Comments } from './comments'
-import type { Meta, Nesting, Prop, PropSpec, Schema } from './types'
+import {Comments} from './comments.js'
+import type {Meta, Nesting, Prop, PropSpec, Schema} from './types.js'
 
 const importFrom = (imports: string, source: string): string => `import { ${imports} } from '${source}';`
 

@@ -1,7 +1,7 @@
 import path from 'path'
-import { Debug } from './debug'
-import { generate } from './generate'
-import type { GoGenerateTarget, YAMLSpec } from './types'
+import {Debug} from './debug.js'
+import {generate} from './generate.js'
+import type {GoGenerateTarget, YAMLSpec} from './types.js'
 
 process.on('unhandledRejection', (err: any) => {
     console.error(err.stack)
