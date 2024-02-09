@@ -32,6 +32,8 @@ type Route struct {
 \tPattern string
 \t// HandlerFunc is the handler function of this route.
 \tHandlerFunc ContextHandler
+\t// Permission is the permission that is required to access this route.
+\tPermissions string
 }
 
 const (
@@ -54,11 +56,12 @@ func CreateRoutes(router Router) Routes {
 \t\t${_indentNewLines(
         requests
             .map(
-                ({ requestType, name }) => `{
+                ({requestType, name, permissions}) => `{
 \tName:        "${name}",
 \tMethod:      http.Method${requestType},
 \tPattern:     ${name}Endpoint,
 \tHandlerFunc: router.${name}(),
+\tPermissions: "${permissions?.join(', ')}",
 },`
             )
             .join('\n'),
@@ -197,6 +200,7 @@ const generate = (
                 ...parsedPath,
                 name: _capitalize(parsedPath.name),
                 requestType: _capitalize(parsedPath.requestType) as Request['requestType'], // TODO(HY): This type is currently broken
+                permissions: parsedPath.permissions
             })
         )
         fs.writeFileSync(path.join(models, 'routers.go'), routers(source, title, description, r))

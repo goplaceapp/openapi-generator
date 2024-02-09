@@ -136,16 +136,20 @@ export const generate = async (name: string, { openapiPath, goGenerateTarget }: 
 
     const requests = Object.entries(parser.api.paths || {})
         .map(([path, requests]: [string, any]) => {
+            return Object.entries(requests).map(([requestType, request]: [string, any]) => {
             const parsedPath = path.replace(/{([^}]+)}/g, ':$1')
-            const permissions = requests.get?.['x-permissions'] || []
-            return Object.entries(requests).map(([requestType, request]: [string, any]) => ({
-                path: parsedPath,
-                requestType,
-                description: request.summary,
-                name: request.operationId,
-                category: request.tags?.[0] || 'index',
-                permissions,
-            }))
+                const extraTags = getExtraTags(request);
+                const permissions = extraTags.find(tag => tag.key === 'x-permissions')?.value || [];
+                return {
+                    path: parsedPath,
+                    requestType,
+                    description: request.summary,
+                    name: request.operationId,
+                    category: request.tags?.[0] || 'index',
+                    permissions,
+
+                }
+            })
         })
         .flat()
         .sort((a, b) => 2 * a.category.localeCompare(b.category) + a.name.localeCompare(b.name)) as Request[]
